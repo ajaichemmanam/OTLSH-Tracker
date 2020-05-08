@@ -1,0 +1,10 @@
+opencv-python
+matplotlib
+Pillow==6.2.2
+cython-bbox
+scipy
+numba
+progress
+motmetrics
+lap
+openpyxl
