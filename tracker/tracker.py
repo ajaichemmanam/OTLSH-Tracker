@@ -90,7 +90,7 @@ class Tracker(object):
 
     def update(self, detections=None):
         self.frame_id += 1
-        activated_starcks = []
+        activated_tracks = []
         refind_tracks = []
         lost_tracks = []
         removed_tracks = []
@@ -129,7 +129,7 @@ class Tracker(object):
 
             if track.state == TrackState.Tracked:
                 track.update(detections[det_idx], self.frame_id)
-                activated_starcks.append(track)
+                activated_tracks.append(track)
             else:
                 track.re_activate(det, self.frame_id, new_id=False)
                 refind_tracks.append(track)
@@ -148,7 +148,7 @@ class Tracker(object):
                 self.lsh.index(det.curr_feat, track.track_id)  # LSH Indexing
                 if track.state == TrackState.Tracked:
                     track.update(det, self.frame_id)
-                    activated_starcks.append(track)
+                    activated_tracks.append(track)
                 else:
                     track.re_activate(det, self.frame_id, new_id=False)
                     refind_tracks.append(track)
@@ -168,7 +168,7 @@ class Tracker(object):
                 self.lsh.index(det.curr_feat, track.track_id)  # LSH Indexing
             if track.state == TrackState.Tracked:
                 track.update(det, self.frame_id)
-                activated_starcks.append(track)
+                activated_tracks.append(track)
             else:
                 track.re_activate(det, self.frame_id, new_id=False)
                 refind_tracks.append(track)
@@ -185,7 +185,7 @@ class Tracker(object):
                 self.lsh.index(det.curr_feat, track.track_id)  # LSH Indexing
                 if track.state == TrackState.Tracked:
                     track.update(det, self.frame_id)
-                    activated_starcks.append(track)
+                    activated_tracks.append(track)
                 else:
                     track.re_activate(det, self.frame_id, new_id=False)
                     refind_tracks.append(track)
@@ -204,7 +204,7 @@ class Tracker(object):
             dists, thresh=0.7)
         for track_idx, det_idx in matches:
             unconfirmed[track_idx].update(detections[det_idx], self.frame_id)
-            activated_starcks.append(unconfirmed[track_idx])
+            activated_tracks.append(unconfirmed[track_idx])
 
         '''Remove unconfirmed tracks'''
         for it in u_unconfirmed:
@@ -218,7 +218,7 @@ class Tracker(object):
             if track.score < self.det_thresh:
                 continue
             track.activate(self.kalman_filter, self.frame_id)
-            activated_starcks.append(track)
+            activated_tracks.append(track)
 
         """ Mark Track as lost"""
         for track in self.lost_tracks:
@@ -231,7 +231,7 @@ class Tracker(object):
         self.tracked_tracks = [
             t for t in self.tracked_tracks if t.state == TrackState.Tracked]
         self.tracked_tracks = join_tracklists(
-            self.tracked_tracks, activated_starcks)
+            self.tracked_tracks, activated_tracks)
         self.tracked_tracks = join_tracklists(
             self.tracked_tracks, refind_tracks)
         self.lost_tracks = remove_from_tracklists(
@@ -249,7 +249,7 @@ class Tracker(object):
         logger.debug(
             '-----------Frame No. {}-----------'.format(self.frame_id))
         logger.debug('Active: {}'.format(
-            [track.track_id for track in activated_starcks]))
+            [track.track_id for track in activated_tracks]))
         logger.debug('ReFound: {}'.format(
             [track.track_id for track in refind_tracks]))
         logger.debug('Lost: {}'.format(
