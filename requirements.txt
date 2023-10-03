@@ -1,6 +1,6 @@
 opencv-python
 matplotlib
-Pillow==9.0.0
+Pillow==10.0.1
 cython-bbox
 scipy
 numba
